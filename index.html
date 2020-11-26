@@ -1,0 +1,128 @@
+<template>
+    <div class="page-login--layer" flex="dir:top main:center cross:center">
+        <!-- logo -->
+        <img class="page-login--logo" src="@/assets/imgs/logo.png" />
+        <!-- form -->
+        <div class="page-login-sub">
+            <div class="login-tip">法本信息</div>
+            <div class="login-title">欢迎登录</div>
+            <div class="page-login--form">
+                <el-form ref="loginForm" label-position="top" :rules="rules" :model="formLogin" size="default">
+                    <el-form-item prop="email">
+                        <el-input type="text" v-model="formLogin.email" placeholder="用户名" clearable></el-input>
+                    </el-form-item>
+                    <el-form-item prop="passWord">
+                        <el-input type="passWord" v-model="formLogin.passWord" placeholder="密码" show-password clearable></el-input>
+                    </el-form-item>
+                    <p class="page-login--options" @click="forgetPassword"><span>忘记密码</span></p>
+                    <el-button size="default" @click="submit" type="primary" class="button-login">登录</el-button>
+                </el-form>
+            </div>
+        </div>
+    </div>
+</template>
+
+<script>
+import dayjs from "dayjs";
+import { mapActions } from "vuex";
+export default {
+    data() {
+        return {
+            timeInterval: null,
+            time: dayjs().format("HH:mm:ss"),
+            // 表单
+            formLogin: {
+                email: "380443667@qq.com",
+                passWord: "15989126802",
+            },
+            // 表单校验
+            rules: {
+                email: [
+                    {
+                        required: true,
+                        message: "请输入用户名",
+                        trigger: "blur",
+                    },
+                ],
+                passWord: [
+                    {
+                        required: true,
+                        message: "请输入密码",
+                        trigger: "blur",
+                    },
+                ],
+            },
+        };
+    },
+    mounted() {
+       
+    },
+
+    methods: {
+        ...mapActions("pms/account", ["login"]),
+        submit() {
+            this.$refs.loginForm.validate((valid) => {
+                if (valid) {
+                    // 登录
+                    // 注意 这里的演示没有传验证码
+                    // 具体需要传递的数据请自行修改代码
+                    this.login({
+                        email: this.formLogin.email,
+                        passWord: this.formLogin.passWord,
+                    }).then(() => {
+                        console.log(432432)
+                        // 重定向对象不存在则返回顶层路径
+                        this.$router.replace(this.$route.query.redirect || "/");
+                    });
+                } else {
+                    // 登录表单校验失败
+                    this.$message.error("表单校验失败，请检查");
+                }
+            });
+        },
+        // 忘记密码
+        forgetPassword() {
+            this.$router.push('/forgetPassword');
+        }
+    },
+};
+</script>
+
+<style lang="scss">
+.page-login--layer{
+    @extend %unable-select;
+    $backgroundColor: #fff;
+    background-color: $backgroundColor;
+    height: 100%;
+    .page-login--logo{
+        position: absolute;
+        left: 20px;
+        top: 20px;
+    }
+    .page-login-sub{
+        width: 480px;
+        background: #fff;
+        height: 560px;
+        border: 1px solid #E1E1E1;
+        padding: 75px 60px;
+        box-sizing: border-box;
+    }
+    .button-login{
+        width: 100%;
+    }
+    .login-tip{
+        color: #999;
+        font-size: 16px;
+    }
+    .login-title{
+        color: #333;
+        font-size: 28px;
+        padding: 20px 0;
+    }
+    .page-login--options{
+        color: #0070C0;
+        margin-bottom: 20px;
+    }
+}
+    
+</style>
